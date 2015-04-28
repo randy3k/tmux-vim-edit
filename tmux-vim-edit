@@ -1,0 +1,28 @@
+#!/usr/bin/env bash -l
+
+set -e
+
+FILE=$(echo $(cd $(dirname "$1") && pwd -P)/$(basename "$1"))
+LINE=$2
+
+PANES=`tmux list-panes -F '#{session_name}|#{window_index}|#{pane_id}|#{pane_pid}|#{pane_current_command}|#{session_attached}|#{window_active}' -a`
+
+while read -r line; do
+    IFS='|' read -a myarray <<< "$line"
+
+    session_name=${myarray[0]}
+    window_index=${myarray[1]}
+    pane_id=${myarray[2]}
+    pane_pid=${myarray[3]}
+    cmd=${myarray[4]}
+    session_attached=${myarray[5]}
+    window_active=${myarray[6]}
+
+    [[ $session_attached -ne 1 ]] && continue
+    [[ $window_active -ne 1 ]] && continue
+    [[ $cmd != 'vim' ]] && continue
+
+    tmux select-pane -t $pane_id
+    tmux send-keys -t $session_name:$window_index Escape ":call TmuxVimEdit('$FILE:$LINE')" Enter
+
+done <<< "$PANES"
