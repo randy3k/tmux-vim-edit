@@ -23,6 +23,6 @@ while read -r line; do
     [[ $cmd != 'vim' ]] && continue
 
     tmux select-pane -t $pane_id
-    tmux send-keys -t $session_name:$window_index Escape ":call TmuxVimEdit('$FILE:$LINE')" Enter
+    tmux send-keys -t $session_name:$window_index Escape ":call TmuxVimEdit('$FILE', $LINE)" Enter
 
 done <<< "$PANES"

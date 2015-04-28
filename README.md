@@ -9,12 +9,11 @@ Edit your `.vimrc` and add:
 
 
 ```vim
-function! TmuxVimEdit(file)
+function! TmuxVimEdit(file, line)
     let cfile = expand("%:p")
-    let l = split(a:file, ":")
-    if cfile == l[0]
+    if cfile == a:file
         normal! gg
-        call cursor(l[1], 0)
+        call cursor(a:line, 0)
         normal! zz
     endif
 endfunction
